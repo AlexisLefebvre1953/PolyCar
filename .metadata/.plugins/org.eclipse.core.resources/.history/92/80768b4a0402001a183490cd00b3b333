@@ -1,0 +1,30 @@
+package fr.unice.polytech.deantoni.vrep.polycar;
+
+import java.util.StringTokenizer;
+
+public class Main {
+
+	public static void main(String[] args) {
+		
+		PolyCar car = new PolyCar("127.0.0.1", 19997);
+		// Lambda Runnable
+		Runnable readLeftSensorsTask = () -> { 
+			car.readLeftSensor();
+		};
+//		SCInterface.readLeftSensors.subscribe(e -> new Thread(readLeftSensorsTask).start());
+		
+		
+		car.start();
+		while(true) {
+			car.goStraight(20);
+		}
+		car.turnRight(2, 20000);
+		float orientation = car.getOrientation();
+		System.out.println(orientation);
+		car.turnRight(2, 10);
+		System.out.println(orientation);
+		
+		
+	}
+
+}

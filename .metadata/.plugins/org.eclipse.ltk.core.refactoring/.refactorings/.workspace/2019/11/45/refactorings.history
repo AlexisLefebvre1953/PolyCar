@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;fr.unice.polytech.deantoni.vrep.polycar.fsm&apos;" deleteContents="false" description="Delete resource &apos;fr.unice.polytech.deantoni.vrep.polycar.fsm&apos;" element1="/fr.unice.polytech.deantoni.vrep.polycar.fsm" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1573198822521"/>
+</session>

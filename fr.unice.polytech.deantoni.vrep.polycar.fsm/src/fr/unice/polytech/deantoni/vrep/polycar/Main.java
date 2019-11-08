@@ -1,5 +1,8 @@
 package fr.unice.polytech.deantoni.vrep.polycar;
 
+import java.util.StringTokenizer;
+
+import fr.unice.polytech.deantoni.vrep.polycar.utils.Pixel;
 
 public class Main {
 
@@ -14,7 +17,29 @@ public class Main {
 		
 		
 		car.start();
-		while(true) {car.sleep(5000);}
+		while(true) {
+			Pixel middle = car.readMiddleSensor();
+			Pixel left = car.readLeftSensor();
+			Pixel right = car.readRightSensor();
+			if(car.checkMiddleProximitySensor()) {
+				car.goCurved(4, 0,100);
+				car.goStraight(0);
+				System.out.println("Pieton");
+			}
+			if(!left.isBlack()) {
+				car.goCurved(4, 0,100);
+			}
+			else if(!right.isBlack()) {
+				car.goCurved(0, 4,100);
+			}
+			middle.isBlack();
+			
+		
+			car.goStraight(10);
+			
+		}
+		
+		
 		
 	}
 

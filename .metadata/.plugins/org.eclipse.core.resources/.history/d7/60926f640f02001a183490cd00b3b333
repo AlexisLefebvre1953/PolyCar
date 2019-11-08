@@ -1,0 +1,36 @@
+package fr.unice.polytech.deantoni.vrep.polycar;
+
+import java.util.StringTokenizer;
+
+import fr.unice.polytech.deantoni.vrep.polycar.utils.Pixel;
+
+public class Main {
+
+	public static void main(String[] args) {
+		
+		PolyCar car = new PolyCar("127.0.0.1", 19997);
+		// Lambda Runnable
+		Runnable readLeftSensorsTask = () -> { 
+			car.readLeftSensor();
+		};
+//		SCInterface.readLeftSensors.subscribe(e -> new Thread(readLeftSensorsTask).start());
+		
+		
+		car.start();
+		while(true) {
+			Pixel middle = car.readMiddleSensor();
+			middle.isBlack();
+			Pixel left = car.readLeftSensor();
+			Pixel right = car.readRightSensor();
+			if(car.checkLeftProximitySensor()) {
+				car.sleep(1000);
+			}
+			car.goStraight(10);
+			
+		}
+		
+		
+		
+	}
+
+}
