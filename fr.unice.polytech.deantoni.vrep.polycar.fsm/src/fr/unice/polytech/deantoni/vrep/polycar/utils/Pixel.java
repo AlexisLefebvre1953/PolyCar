@@ -18,7 +18,7 @@ public class Pixel {
 		return R < 20 && G < 20 && B > 220;
 	}
 	public boolean isGreen() {
-		return R > 220 && G < 20 && B < 20;
+		return R < 20 && G > 220 && B < 20;
 	}
 	public boolean isOrange() {
 		return R > 220 && G < 180 && G > 130 && B < 20;
