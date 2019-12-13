@@ -1,0 +1,15 @@
+GeneratorModel for yakindu::deantoni::java {
+
+	statechart polycar {
+
+		feature Outlet {
+			targetProject = "fr.unice.polytech.deantoni.vrep.polycar.fsm"
+			targetFolder = "src-gen"
+			libraryTargetFolder = "src"
+		}
+		feature GeneralFeatures {
+			RuntimeService = true
+			TimerService = true
+		}
+	}
+}

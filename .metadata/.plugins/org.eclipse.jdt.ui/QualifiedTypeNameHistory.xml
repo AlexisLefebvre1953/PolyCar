@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.util.StringTokenizer"/>
+    <fullyQualifiedTypeName name="fr.unice.polytech.deantoni.vrep.polycar.fsm.polycar.PolycarStatemachine"/>
+    <fullyQualifiedTypeName name="fr.unice.polytech.deantoni.vrep.polycar.fsm.polycar.IPolycarStatemachine.SCInterface"/>
+    <fullyQualifiedTypeName name="org.yakindu.sct.generator.polytech.java.TimerService"/>
+    <fullyQualifiedTypeName name="fr.unice.polytech.deantoni.vrep.polycar.fsm.TimerService"/>
+    <fullyQualifiedTypeName name="fr.unice.polytech.deantoni.vrep.polycar.utils.Pixel"/>
+    <fullyQualifiedTypeName name="java.util.Random"/>
+</qualifiedTypeNameHistroy>

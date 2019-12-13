@@ -1,0 +1,22 @@
+package fr.unice.polytech.deantoni.vrep.polycar;
+
+
+public class Main {
+	
+	
+
+	public static void main(String[] args) {
+		
+		
+		PolycarSM mysm = new PolycarSM();
+		
+		
+		
+		//TODO : La voiture ne tourne pas car elle va dan sle 4 de "FrontCanBeReached" tous le temps
+		// TODO (suite) : -> faire une couche dans la FSM qui check les interdictions puis qui check les capteurs pour enfin choisir de tourner  
+		
+		
+	}
+	
+
+}
