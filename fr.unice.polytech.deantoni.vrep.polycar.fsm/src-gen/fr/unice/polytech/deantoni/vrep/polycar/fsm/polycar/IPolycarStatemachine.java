@@ -24,11 +24,21 @@ public interface IPolycarStatemachine extends ITimerCallback,IStatemachine {
 		public Event randomSide = new Event();
 		public Event randomForwardLeft = new Event();
 		public Event randomForwardRight = new Event();
+		public Event parkLeft = new Event();
+		public Event parkRight = new Event();
+		public Event checkFreeRight = new Event();
+		public Event checkFreeLeft = new Event();
+		public Event forwardTillEndOfPlace = new Event();
 		public Event resetAccesses = new Event();
 	
 		public void raiseStart();
 		
 		public void raiseStop();
+		
+		
+		
+		
+		
 		
 		
 		
@@ -50,10 +60,6 @@ public interface IPolycarStatemachine extends ITimerCallback,IStatemachine {
 		public boolean getRightOut();
 		
 		public void setRightOut(boolean value);
-		
-		public boolean getMiddleOut();
-		
-		public void setMiddleOut(boolean value);
 		
 		public boolean getVeryRightOut();
 		
@@ -78,6 +84,26 @@ public interface IPolycarStatemachine extends ITimerCallback,IStatemachine {
 		public boolean getCanTurnRight();
 		
 		public void setCanTurnRight(boolean value);
+		
+		public boolean getParkAsked();
+		
+		public void setParkAsked(boolean value);
+		
+		public boolean getParkingPlaceLeft();
+		
+		public void setParkingPlaceLeft(boolean value);
+		
+		public boolean getParkingPlaceRight();
+		
+		public void setParkingPlaceRight(boolean value);
+		
+		public boolean getParkingPlaceFree();
+		
+		public void setParkingPlaceFree(boolean value);
+		
+		public boolean getParkingPlaceFull();
+		
+		public void setParkingPlaceFull(boolean value);
 		
 	}
 	

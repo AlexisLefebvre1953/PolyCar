@@ -26,6 +26,9 @@ public class Pixel {
 	public boolean isBlack() {
 		return R < 20 && G < 20 && B < 20;
 	}
+	public boolean isWhite() {
+		return R > 230 && G > 230 && B > 230;
+	}
 	
 	@Override
 	public String toString() {

@@ -93,6 +93,36 @@
 			
 			
 			
+			protected void raiseParkLeft() {
+				parkLeft.emits();
+			}
+			
+			
+			
+			protected void raiseParkRight() {
+				parkRight.emits();
+			}
+			
+			
+			
+			protected void raiseCheckFreeRight() {
+				checkFreeRight.emits();
+			}
+			
+			
+			
+			protected void raiseCheckFreeLeft() {
+				checkFreeLeft.emits();
+			}
+			
+			
+			
+			protected void raiseForwardTillEndOfPlace() {
+				forwardTillEndOfPlace.emits();
+			}
+			
+			
+			
 			protected void raiseResetAccesses() {
 				resetAccesses.emits();
 			}
@@ -115,16 +145,6 @@
 			
 			public void setRightOut(boolean value) {
 				this.rightOut = value;
-			}
-			
-			private boolean middleOut;
-			
-			public boolean getMiddleOut() {
-				return middleOut;
-			}
-			
-			public void setMiddleOut(boolean value) {
-				this.middleOut = value;
 			}
 			
 			private boolean veryRightOut;
@@ -187,6 +207,56 @@
 				this.canTurnRight = value;
 			}
 			
+			private boolean parkAsked;
+			
+			public boolean getParkAsked() {
+				return parkAsked;
+			}
+			
+			public void setParkAsked(boolean value) {
+				this.parkAsked = value;
+			}
+			
+			private boolean parkingPlaceLeft;
+			
+			public boolean getParkingPlaceLeft() {
+				return parkingPlaceLeft;
+			}
+			
+			public void setParkingPlaceLeft(boolean value) {
+				this.parkingPlaceLeft = value;
+			}
+			
+			private boolean parkingPlaceRight;
+			
+			public boolean getParkingPlaceRight() {
+				return parkingPlaceRight;
+			}
+			
+			public void setParkingPlaceRight(boolean value) {
+				this.parkingPlaceRight = value;
+			}
+			
+			private boolean parkingPlaceFree;
+			
+			public boolean getParkingPlaceFree() {
+				return parkingPlaceFree;
+			}
+			
+			public void setParkingPlaceFree(boolean value) {
+				this.parkingPlaceFree = value;
+			}
+			
+			private boolean parkingPlaceFull;
+			
+			public boolean getParkingPlaceFull() {
+				return parkingPlaceFull;
+			}
+			
+			public void setParkingPlaceFull(boolean value) {
+				this.parkingPlaceFull = value;
+			}
+			
 			protected void clearEvents() {
 				start = false;
 				stop = false;
@@ -229,6 +299,11 @@
 			main_region_main_r1_Moving_r1_GoBackToRoad_r1_TurnLeft,
 			main_region_main_r1_Stopped,
 			main_region_main_r1_Init,
+			main_region_main_r1_Parking,
+			main_region_main_r1_Parking_r1_park,
+			main_region_main_r1_Parking_r1_parkLeft,
+			main_region_main_r1_Parking_r1_parkRight,
+			main_region_main_r1_fullPlace,
 			main_region_main_r2_ReadSensors,
 			main_region_main__region2_Obstacle,
 			$NullState$
@@ -240,7 +315,7 @@
 		
 		private ITimer timer;
 		
-		private final boolean[] timeEvents = new boolean[3];
+		private final boolean[] timeEvents = new boolean[5];
 		public PolycarStatemachine() {
 			sCInterface = new SCInterfaceImpl();
 		}
@@ -259,8 +334,6 @@
 			
 			sCInterface.setRightOut(false);
 			
-			sCInterface.setMiddleOut(false);
-			
 			sCInterface.setVeryRightOut(true);
 			
 			sCInterface.setVeryLeftOut(true);
@@ -272,6 +345,16 @@
 			sCInterface.setCanTurnLeft(true);
 			
 			sCInterface.setCanTurnRight(true);
+			
+			sCInterface.setParkAsked(false);
+			
+			sCInterface.setParkingPlaceLeft(false);
+			
+			sCInterface.setParkingPlaceRight(false);
+			
+			sCInterface.setParkingPlaceFree(false);
+			
+			sCInterface.setParkingPlaceFull(false);
 		}
 		
 		public void enter() {
@@ -386,6 +469,17 @@
 				return stateVector[0] == State.main_region_main_r1_Stopped;
 			case main_region_main_r1_Init:
 				return stateVector[0] == State.main_region_main_r1_Init;
+			case main_region_main_r1_Parking:
+				return stateVector[0].ordinal() >= State.
+						main_region_main_r1_Parking.ordinal()&& stateVector[0].ordinal() <= State.main_region_main_r1_Parking_r1_parkRight.ordinal();
+			case main_region_main_r1_Parking_r1_park:
+				return stateVector[0] == State.main_region_main_r1_Parking_r1_park;
+			case main_region_main_r1_Parking_r1_parkLeft:
+				return stateVector[0] == State.main_region_main_r1_Parking_r1_parkLeft;
+			case main_region_main_r1_Parking_r1_parkRight:
+				return stateVector[0] == State.main_region_main_r1_Parking_r1_parkRight;
+			case main_region_main_r1_fullPlace:
+				return stateVector[0] == State.main_region_main_r1_fullPlace;
 			case main_region_main_r2_ReadSensors:
 				return stateVector[1] == State.main_region_main_r2_ReadSensors;
 			case main_region_main__region2_Obstacle:
@@ -445,6 +539,11 @@
 		
 		
 		
+		
+		
+		
+		
+		
 		public boolean getLeftOut() {
 			return sCInterface.getLeftOut();
 		}
@@ -459,14 +558,6 @@
 		
 		public void setRightOut(boolean value) {
 			sCInterface.setRightOut(value);
-		}
-		
-		public boolean getMiddleOut() {
-			return sCInterface.getMiddleOut();
-		}
-		
-		public void setMiddleOut(boolean value) {
-			sCInterface.setMiddleOut(value);
 		}
 		
 		public boolean getVeryRightOut() {
@@ -517,8 +608,56 @@
 			sCInterface.setCanTurnRight(value);
 		}
 		
+		public boolean getParkAsked() {
+			return sCInterface.getParkAsked();
+		}
+		
+		public void setParkAsked(boolean value) {
+			sCInterface.setParkAsked(value);
+		}
+		
+		public boolean getParkingPlaceLeft() {
+			return sCInterface.getParkingPlaceLeft();
+		}
+		
+		public void setParkingPlaceLeft(boolean value) {
+			sCInterface.setParkingPlaceLeft(value);
+		}
+		
+		public boolean getParkingPlaceRight() {
+			return sCInterface.getParkingPlaceRight();
+		}
+		
+		public void setParkingPlaceRight(boolean value) {
+			sCInterface.setParkingPlaceRight(value);
+		}
+		
+		public boolean getParkingPlaceFree() {
+			return sCInterface.getParkingPlaceFree();
+		}
+		
+		public void setParkingPlaceFree(boolean value) {
+			sCInterface.setParkingPlaceFree(value);
+		}
+		
+		public boolean getParkingPlaceFull() {
+			return sCInterface.getParkingPlaceFull();
+		}
+		
+		public void setParkingPlaceFull(boolean value) {
+			sCInterface.setParkingPlaceFull(value);
+		}
+		
 		private boolean check_main_region_main_r1_Moving_tr0_tr0() {
 			return sCInterface.stop;
+		}
+		
+		private boolean check_main_region_main_r1_Moving_tr1_tr1() {
+			return ((sCInterface.getParkAsked() && sCInterface.getParkingPlaceLeft()) && !sCInterface.getParkingPlaceFull());
+		}
+		
+		private boolean check_main_region_main_r1_Moving_tr2_tr2() {
+			return ((sCInterface.getParkAsked() && sCInterface.getParkingPlaceRight()) && !sCInterface.getParkingPlaceFull());
 		}
 		
 		private boolean check_main_region_main_r1_Moving_r1_GoingForward_tr0_tr0() {
@@ -669,9 +808,37 @@
 			return sCInterface.start;
 		}
 		
-		private boolean check_main_region_main_r2_ReadSensors_tr0_tr0() {
+		private boolean check_main_region_main_r1_Parking_tr0_tr0() {
+			return sCInterface.getParkingPlaceFull();
+		}
+		
+		private boolean check_main_region_main_r1_Parking_r1_parkLeft_tr0_tr0() {
+			return sCInterface.getParkingPlaceFree();
+		}
+		
+		private boolean check_main_region_main_r1_Parking_r1_parkLeft_tr1_tr1() {
 			boolean isPresent = timeEvents[2];
 			timeEvents[2] = false;
+			return isPresent;
+		}
+		
+		private boolean check_main_region_main_r1_Parking_r1_parkRight_tr0_tr0() {
+			return sCInterface.getParkingPlaceFree();
+		}
+		
+		private boolean check_main_region_main_r1_Parking_r1_parkRight_tr1_tr1() {
+			boolean isPresent = timeEvents[3];
+			timeEvents[3] = false;
+			return isPresent;
+		}
+		
+		private boolean check_main_region_main_r1_fullPlace_tr0_tr0() {
+			return !sCInterface.getParkingPlaceFull();
+		}
+		
+		private boolean check_main_region_main_r2_ReadSensors_tr0_tr0() {
+			boolean isPresent = timeEvents[4];
+			timeEvents[4] = false;
 			return isPresent;
 		}
 		
@@ -680,6 +847,20 @@
 			sCInterface.raiseStopCar();
 			
 			enterSequence_main_region_main_r1_Stopped_default();
+		}
+		
+		private void effect_main_region_main_r1_Moving_tr1() {
+			exitSequence_main_region_main_r1_Moving();
+			sCInterface.raiseCheckFreeLeft();
+			
+			enterSequence_main_region_main_r1_Parking_r1_parkLeft_default();
+		}
+		
+		private void effect_main_region_main_r1_Moving_tr2() {
+			exitSequence_main_region_main_r1_Moving();
+			sCInterface.raiseCheckFreeRight();
+			
+			enterSequence_main_region_main_r1_Parking_r1_parkRight_default();
 		}
 		
 		private void effect_main_region_main_r1_Moving_r1_GoingForward_tr0() {
@@ -912,6 +1093,48 @@
 			enterSequence_main_region_main_r1_Moving_default();
 		}
 		
+		private void effect_main_region_main_r1_Parking_tr0() {
+			exitSequence_main_region_main_r1_Parking();
+			sCInterface.raiseForwardTillEndOfPlace();
+			
+			enterSequence_main_region_main_r1_fullPlace_default();
+		}
+		
+		private void effect_main_region_main_r1_Parking_r1_parkLeft_tr0() {
+			exitSequence_main_region_main_r1_Parking_r1_parkLeft();
+			sCInterface.raiseParkLeft();
+			
+			enterSequence_main_region_main_r1_Parking_r1_park_default();
+		}
+		
+		private void effect_main_region_main_r1_Parking_r1_parkLeft_tr1() {
+			exitSequence_main_region_main_r1_Parking_r1_parkLeft();
+			sCInterface.raiseCheckFreeLeft();
+			
+			enterSequence_main_region_main_r1_Parking_r1_parkLeft_default();
+		}
+		
+		private void effect_main_region_main_r1_Parking_r1_parkRight_tr0() {
+			exitSequence_main_region_main_r1_Parking_r1_parkRight();
+			sCInterface.raiseParkRight();
+			
+			enterSequence_main_region_main_r1_Parking_r1_park_default();
+		}
+		
+		private void effect_main_region_main_r1_Parking_r1_parkRight_tr1() {
+			exitSequence_main_region_main_r1_Parking_r1_parkRight();
+			sCInterface.raiseCheckFreeRight();
+			
+			enterSequence_main_region_main_r1_Parking_r1_parkRight_default();
+		}
+		
+		private void effect_main_region_main_r1_fullPlace_tr0() {
+			exitSequence_main_region_main_r1_fullPlace();
+			sCInterface.raiseGoForward();
+			
+			enterSequence_main_region_main_r1_Moving_default();
+		}
+		
 		private void effect_main_region_main_r2_ReadSensors_tr0() {
 			exitSequence_main_region_main_r2_ReadSensors();
 			sCInterface.raiseReadSensors();
@@ -929,9 +1152,19 @@
 			timer.setTimer(this, 1, (1 * 1000), false);
 		}
 		
+		/* Entry action for state 'parkLeft'. */
+		private void entryAction_main_region_main_r1_Parking_r1_parkLeft() {
+			timer.setTimer(this, 2, 100, false);
+		}
+		
+		/* Entry action for state 'parkRight'. */
+		private void entryAction_main_region_main_r1_Parking_r1_parkRight() {
+			timer.setTimer(this, 3, 100, false);
+		}
+		
 		/* Entry action for state 'ReadSensors'. */
 		private void entryAction_main_region_main_r2_ReadSensors() {
-			timer.setTimer(this, 2, 20, false);
+			timer.setTimer(this, 4, 20, false);
 		}
 		
 		/* Exit action for state 'Turning'. */
@@ -944,9 +1177,19 @@
 			timer.unsetTimer(this, 1);
 		}
 		
+		/* Exit action for state 'parkLeft'. */
+		private void exitAction_main_region_main_r1_Parking_r1_parkLeft() {
+			timer.unsetTimer(this, 2);
+		}
+		
+		/* Exit action for state 'parkRight'. */
+		private void exitAction_main_region_main_r1_Parking_r1_parkRight() {
+			timer.unsetTimer(this, 3);
+		}
+		
 		/* Exit action for state 'ReadSensors'. */
 		private void exitAction_main_region_main_r2_ReadSensors() {
-			timer.unsetTimer(this, 2);
+			timer.unsetTimer(this, 4);
 		}
 		
 		/* 'default' enter sequence for state main */
@@ -1096,6 +1339,32 @@
 		private void enterSequence_main_region_main_r1_Init_default() {
 			nextStateIndex = 0;
 			stateVector[0] = State.main_region_main_r1_Init;
+		}
+		
+		/* 'default' enter sequence for state park */
+		private void enterSequence_main_region_main_r1_Parking_r1_park_default() {
+			nextStateIndex = 0;
+			stateVector[0] = State.main_region_main_r1_Parking_r1_park;
+		}
+		
+		/* 'default' enter sequence for state parkLeft */
+		private void enterSequence_main_region_main_r1_Parking_r1_parkLeft_default() {
+			entryAction_main_region_main_r1_Parking_r1_parkLeft();
+			nextStateIndex = 0;
+			stateVector[0] = State.main_region_main_r1_Parking_r1_parkLeft;
+		}
+		
+		/* 'default' enter sequence for state parkRight */
+		private void enterSequence_main_region_main_r1_Parking_r1_parkRight_default() {
+			entryAction_main_region_main_r1_Parking_r1_parkRight();
+			nextStateIndex = 0;
+			stateVector[0] = State.main_region_main_r1_Parking_r1_parkRight;
+		}
+		
+		/* 'default' enter sequence for state fullPlace */
+		private void enterSequence_main_region_main_r1_fullPlace_default() {
+			nextStateIndex = 0;
+			stateVector[0] = State.main_region_main_r1_fullPlace;
 		}
 		
 		/* 'default' enter sequence for state ReadSensors */
@@ -1294,6 +1563,39 @@
 			stateVector[0] = State.$NullState$;
 		}
 		
+		/* Default exit sequence for state Parking */
+		private void exitSequence_main_region_main_r1_Parking() {
+			exitSequence_main_region_main_r1_Parking_r1();
+		}
+		
+		/* Default exit sequence for state park */
+		private void exitSequence_main_region_main_r1_Parking_r1_park() {
+			nextStateIndex = 0;
+			stateVector[0] = State.$NullState$;
+		}
+		
+		/* Default exit sequence for state parkLeft */
+		private void exitSequence_main_region_main_r1_Parking_r1_parkLeft() {
+			nextStateIndex = 0;
+			stateVector[0] = State.$NullState$;
+			
+			exitAction_main_region_main_r1_Parking_r1_parkLeft();
+		}
+		
+		/* Default exit sequence for state parkRight */
+		private void exitSequence_main_region_main_r1_Parking_r1_parkRight() {
+			nextStateIndex = 0;
+			stateVector[0] = State.$NullState$;
+			
+			exitAction_main_region_main_r1_Parking_r1_parkRight();
+		}
+		
+		/* Default exit sequence for state fullPlace */
+		private void exitSequence_main_region_main_r1_fullPlace() {
+			nextStateIndex = 0;
+			stateVector[0] = State.$NullState$;
+		}
+		
 		/* Default exit sequence for state ReadSensors */
 		private void exitSequence_main_region_main_r2_ReadSensors() {
 			nextStateIndex = 1;
@@ -1378,6 +1680,18 @@
 				break;
 			case main_region_main_r1_Init:
 				exitSequence_main_region_main_r1_Init();
+				break;
+			case main_region_main_r1_Parking_r1_park:
+				exitSequence_main_region_main_r1_Parking_r1_park();
+				break;
+			case main_region_main_r1_Parking_r1_parkLeft:
+				exitSequence_main_region_main_r1_Parking_r1_parkLeft();
+				break;
+			case main_region_main_r1_Parking_r1_parkRight:
+				exitSequence_main_region_main_r1_Parking_r1_parkRight();
+				break;
+			case main_region_main_r1_fullPlace:
+				exitSequence_main_region_main_r1_fullPlace();
 				break;
 			default:
 				break;
@@ -1470,6 +1784,18 @@
 				break;
 			case main_region_main_r1_Init:
 				exitSequence_main_region_main_r1_Init();
+				break;
+			case main_region_main_r1_Parking_r1_park:
+				exitSequence_main_region_main_r1_Parking_r1_park();
+				break;
+			case main_region_main_r1_Parking_r1_parkLeft:
+				exitSequence_main_region_main_r1_Parking_r1_parkLeft();
+				break;
+			case main_region_main_r1_Parking_r1_parkRight:
+				exitSequence_main_region_main_r1_Parking_r1_parkRight();
+				break;
+			case main_region_main_r1_fullPlace:
+				exitSequence_main_region_main_r1_fullPlace();
 				break;
 			default:
 				break;
@@ -1670,6 +1996,23 @@
 			}
 		}
 		
+		/* Default exit sequence for region r1 */
+		private void exitSequence_main_region_main_r1_Parking_r1() {
+			switch (stateVector[0]) {
+			case main_region_main_r1_Parking_r1_park:
+				exitSequence_main_region_main_r1_Parking_r1_park();
+				break;
+			case main_region_main_r1_Parking_r1_parkLeft:
+				exitSequence_main_region_main_r1_Parking_r1_parkLeft();
+				break;
+			case main_region_main_r1_Parking_r1_parkRight:
+				exitSequence_main_region_main_r1_Parking_r1_parkRight();
+				break;
+			default:
+				break;
+			}
+		}
+		
 		/* Default exit sequence for region r2 */
 		private void exitSequence_main_region_main_r2() {
 			switch (stateVector[1]) {
@@ -1711,6 +2054,14 @@
 							} else {
 								if (check_main_region_main_r1_Moving_tr0_tr0()) {
 									effect_main_region_main_r1_Moving_tr0();
+								} else {
+									if (check_main_region_main_r1_Moving_tr1_tr1()) {
+										effect_main_region_main_r1_Moving_tr1();
+									} else {
+										if (check_main_region_main_r1_Moving_tr2_tr2()) {
+											effect_main_region_main_r1_Moving_tr2();
+										}
+									}
 								}
 							}
 						}
@@ -1732,6 +2083,14 @@
 					} else {
 						if (check_main_region_main_r1_Moving_tr0_tr0()) {
 							effect_main_region_main_r1_Moving_tr0();
+						} else {
+							if (check_main_region_main_r1_Moving_tr1_tr1()) {
+								effect_main_region_main_r1_Moving_tr1();
+							} else {
+								if (check_main_region_main_r1_Moving_tr2_tr2()) {
+									effect_main_region_main_r1_Moving_tr2();
+								}
+							}
 						}
 					}
 				}
@@ -1745,6 +2104,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1756,6 +2123,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1767,6 +2142,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1778,6 +2161,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1789,6 +2180,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1806,6 +2205,14 @@
 					} else {
 						if (check_main_region_main_r1_Moving_tr0_tr0()) {
 							effect_main_region_main_r1_Moving_tr0();
+						} else {
+							if (check_main_region_main_r1_Moving_tr1_tr1()) {
+								effect_main_region_main_r1_Moving_tr1();
+							} else {
+								if (check_main_region_main_r1_Moving_tr2_tr2()) {
+									effect_main_region_main_r1_Moving_tr2();
+								}
+							}
 						}
 					}
 				}
@@ -1822,6 +2229,14 @@
 				} else {
 					if (check_main_region_main_r1_Moving_tr0_tr0()) {
 						effect_main_region_main_r1_Moving_tr0();
+					} else {
+						if (check_main_region_main_r1_Moving_tr1_tr1()) {
+							effect_main_region_main_r1_Moving_tr1();
+						} else {
+							if (check_main_region_main_r1_Moving_tr2_tr2()) {
+								effect_main_region_main_r1_Moving_tr2();
+							}
+						}
 					}
 				}
 			}
@@ -1843,6 +2258,14 @@
 						} else {
 							if (check_main_region_main_r1_Moving_tr0_tr0()) {
 								effect_main_region_main_r1_Moving_tr0();
+							} else {
+								if (check_main_region_main_r1_Moving_tr1_tr1()) {
+									effect_main_region_main_r1_Moving_tr1();
+								} else {
+									if (check_main_region_main_r1_Moving_tr2_tr2()) {
+										effect_main_region_main_r1_Moving_tr2();
+									}
+								}
 							}
 						}
 					}
@@ -1863,6 +2286,14 @@
 					} else {
 						if (check_main_region_main_r1_Moving_tr0_tr0()) {
 							effect_main_region_main_r1_Moving_tr0();
+						} else {
+							if (check_main_region_main_r1_Moving_tr1_tr1()) {
+								effect_main_region_main_r1_Moving_tr1();
+							} else {
+								if (check_main_region_main_r1_Moving_tr2_tr2()) {
+									effect_main_region_main_r1_Moving_tr2();
+								}
+							}
 						}
 					}
 				}
@@ -1882,6 +2313,14 @@
 					} else {
 						if (check_main_region_main_r1_Moving_tr0_tr0()) {
 							effect_main_region_main_r1_Moving_tr0();
+						} else {
+							if (check_main_region_main_r1_Moving_tr1_tr1()) {
+								effect_main_region_main_r1_Moving_tr1();
+							} else {
+								if (check_main_region_main_r1_Moving_tr2_tr2()) {
+									effect_main_region_main_r1_Moving_tr2();
+								}
+							}
 						}
 					}
 				}
@@ -1901,6 +2340,14 @@
 					} else {
 						if (check_main_region_main_r1_Moving_tr0_tr0()) {
 							effect_main_region_main_r1_Moving_tr0();
+						} else {
+							if (check_main_region_main_r1_Moving_tr1_tr1()) {
+								effect_main_region_main_r1_Moving_tr1();
+							} else {
+								if (check_main_region_main_r1_Moving_tr2_tr2()) {
+									effect_main_region_main_r1_Moving_tr2();
+								}
+							}
 						}
 					}
 				}
@@ -1914,6 +2361,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1925,6 +2380,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1936,6 +2399,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1947,6 +2418,14 @@
 			} else {
 				if (check_main_region_main_r1_Moving_tr0_tr0()) {
 					effect_main_region_main_r1_Moving_tr0();
+				} else {
+					if (check_main_region_main_r1_Moving_tr1_tr1()) {
+						effect_main_region_main_r1_Moving_tr1();
+					} else {
+						if (check_main_region_main_r1_Moving_tr2_tr2()) {
+							effect_main_region_main_r1_Moving_tr2();
+						}
+					}
 				}
 			}
 		}
@@ -1964,6 +2443,14 @@
 					} else {
 						if (check_main_region_main_r1_Moving_tr0_tr0()) {
 							effect_main_region_main_r1_Moving_tr0();
+						} else {
+							if (check_main_region_main_r1_Moving_tr1_tr1()) {
+								effect_main_region_main_r1_Moving_tr1();
+							} else {
+								if (check_main_region_main_r1_Moving_tr2_tr2()) {
+									effect_main_region_main_r1_Moving_tr2();
+								}
+							}
 						}
 					}
 				}
@@ -1983,6 +2470,14 @@
 					} else {
 						if (check_main_region_main_r1_Moving_tr0_tr0()) {
 							effect_main_region_main_r1_Moving_tr0();
+						} else {
+							if (check_main_region_main_r1_Moving_tr1_tr1()) {
+								effect_main_region_main_r1_Moving_tr1();
+							} else {
+								if (check_main_region_main_r1_Moving_tr2_tr2()) {
+									effect_main_region_main_r1_Moving_tr2();
+								}
+							}
 						}
 					}
 				}
@@ -2000,6 +2495,50 @@
 		private void react_main_region_main_r1_Init() {
 			if (check_main_region_main_r1_Init_tr0_tr0()) {
 				effect_main_region_main_r1_Init_tr0();
+			}
+		}
+		
+		/* The reactions of state park. */
+		private void react_main_region_main_r1_Parking_r1_park() {
+			if (check_main_region_main_r1_Parking_tr0_tr0()) {
+				effect_main_region_main_r1_Parking_tr0();
+			}
+		}
+		
+		/* The reactions of state parkLeft. */
+		private void react_main_region_main_r1_Parking_r1_parkLeft() {
+			if (check_main_region_main_r1_Parking_r1_parkLeft_tr0_tr0()) {
+				effect_main_region_main_r1_Parking_r1_parkLeft_tr0();
+			} else {
+				if (check_main_region_main_r1_Parking_r1_parkLeft_tr1_tr1()) {
+					effect_main_region_main_r1_Parking_r1_parkLeft_tr1();
+				} else {
+					if (check_main_region_main_r1_Parking_tr0_tr0()) {
+						effect_main_region_main_r1_Parking_tr0();
+					}
+				}
+			}
+		}
+		
+		/* The reactions of state parkRight. */
+		private void react_main_region_main_r1_Parking_r1_parkRight() {
+			if (check_main_region_main_r1_Parking_r1_parkRight_tr0_tr0()) {
+				effect_main_region_main_r1_Parking_r1_parkRight_tr0();
+			} else {
+				if (check_main_region_main_r1_Parking_r1_parkRight_tr1_tr1()) {
+					effect_main_region_main_r1_Parking_r1_parkRight_tr1();
+				} else {
+					if (check_main_region_main_r1_Parking_tr0_tr0()) {
+						effect_main_region_main_r1_Parking_tr0();
+					}
+				}
+			}
+		}
+		
+		/* The reactions of state fullPlace. */
+		private void react_main_region_main_r1_fullPlace() {
+			if (check_main_region_main_r1_fullPlace_tr0_tr0()) {
+				effect_main_region_main_r1_fullPlace_tr0();
 			}
 		}
 		
@@ -2118,6 +2657,18 @@
 					break;
 				case main_region_main_r1_Init:
 					react_main_region_main_r1_Init();
+					break;
+				case main_region_main_r1_Parking_r1_park:
+					react_main_region_main_r1_Parking_r1_park();
+					break;
+				case main_region_main_r1_Parking_r1_parkLeft:
+					react_main_region_main_r1_Parking_r1_parkLeft();
+					break;
+				case main_region_main_r1_Parking_r1_parkRight:
+					react_main_region_main_r1_Parking_r1_parkRight();
+					break;
+				case main_region_main_r1_fullPlace:
+					react_main_region_main_r1_fullPlace();
 					break;
 				case main_region_main_r2_ReadSensors:
 					react_main_region_main_r2_ReadSensors();

@@ -4,6 +4,7 @@ import fr.unice.polytech.deantoni.vrep.polycar.fsm.polycar.PolycarStatemachine;
 import fr.unice.polytech.deantoni.vrep.polycar.utils.Pixel;
 
 import java.util.Random;
+import java.util.Scanner;
 
 import fr.unice.polytech.deantoni.vrep.polycar.fsm.TimerService;
 import fr.unice.polytech.deantoni.vrep.polycar.fsm.polycar.IPolycarStatemachine.SCInterface;
@@ -15,6 +16,7 @@ public class PolycarSM {
 	private Pixel veryRight;
 	private Pixel veryLeft;
 	private Thread parkThread;
+	private Runnable waitForPark;
 	
 	public PolycarSM() {
 		
@@ -27,8 +29,6 @@ public class PolycarSM {
 			car.readLeftSensor();
 		};
 		
-		//SCInterface.readLeftSensors.subscribe(e -> new Thread(readLeftSensorsTask).start());
-		//SCInterface.readSensors.subscribe(e -> new Thread(readSensorsTask).start());
 		
 		car.start();
 		
@@ -50,13 +50,23 @@ public class PolycarSM {
 		SCInterface.randomSide.subscribe(event -> randomSide());
 		SCInterface.randomForwardLeft.subscribe(event -> randomForwardLeft());
 		SCInterface.randomForwardRight.subscribe(event -> randomForwardRight());
+		SCInterface.parkLeft.subscribe(event -> parkLeft());
+		SCInterface.parkRight.subscribe(event -> parkRight());
+		SCInterface.checkFreeLeft.subscribe(event -> checkFreeLeft());
+		SCInterface.checkFreeRight.subscribe(event -> checkFreeRight());
+		SCInterface.forwardTillEndOfPlace.subscribe(event -> forwardTillEndOfPlace());
 		SCInterface.resetAccesses.subscribe(event -> resetAccesses());
 
+		
 		// Raise start
 		polycarSM.getSCInterface().raiseStart();
+		waitForPark = () -> waitForPark();
+		parkThread = new Thread(waitForPark);
+		parkThread.start();
 		while(true) {
 			
 		}
+		
 		
 		
 	}
@@ -112,26 +122,12 @@ public class PolycarSM {
 			polycarSM.setCanGoStraight(false);
 			System.out.println("cannot go straight");
 		}
+		if(polycarSM.getParkAsked() && (veryLeft.isWhite() || veryRight.isWhite()))
+			if(veryLeft.isWhite())
+				polycarSM.setParkingPlaceLeft(true);
+			else 
+				polycarSM.setParkingPlaceRight(true);
 		
-		//polycarSM.setCanTurnRight(!veryRight.isOrange());
-		//System.out.println("canturnright"+!veryRight.isOrange());
-			// if the LEFT sensor is RED the car cannot go straight
-		/*polycarSM.setCanGoStraight(!veryLeft.isRed());
-		if(car.readVeryLeftSensor().isRed()) {
-			System.out.println("RED LEFT");
-		}
-			// if the RIGHT sensor is ORANGE the car cannot turn right
-		polycarSM.setCanTurnRight(!car.veryRight.isOrange());
-			// if the RIGHT sensor is BLUE the car can turn right
-		polycarSM.setCanTurnRight(car.veryRight.isBlue());
-			// if the LEFT sensor is BLUE the car can turn left
-		polycarSM.setCanTurnLeft(car.veryLeft.isBlue());
-		
-	*/
-		 
-		
-		
-	
 		
 	}
 	
@@ -232,6 +228,83 @@ public class PolycarSM {
 		}
 	}
 	
+	private void waitForPark() {
+		Scanner sc = new Scanner(System.in);
+		while(true) {
+			char c = sc.nextLine().charAt(0);
+			if(c == 'p') {
+				polycarSM.setParkAsked(true);
+			}
+		}
+	     
+	}
+	
+	private void checkFreeRight() {
+		
+		car.goStraight(4);
+		if(car.checkRightProximitySensor()) {
+			polycarSM.setParkingPlaceFull(true);
+			return;
+		}
+		if(!car.readVeryRightSensor().isWhite()) {
+			polycarSM.setParkingPlaceFree(true);
+			
+		}
+			
+	     
+	}
+	private void checkFreeLeft() {
+		car.goStraight(4);
+		if(car.checkLeftProximitySensor()) {
+			polycarSM.setParkingPlaceFull(true);
+			return;
+		}
+			
+		if(!car.readVeryLeftSensor().isWhite()) {
+			polycarSM.setParkingPlaceFree(true);
+			
+		}
+			
+			
+	     
+	}
+	
+	private void parkLeft() {
+		System.out.println("Park right");
+		car.goStraight(10,1400);
+		car.goCurved(-3,-6, 6000);
+		car.goCurved(-6,-3, 6000);
+		car.goStraight(0);
+		
+	     
+	}
+	private void parkRight() {
+		System.out.println("Park right");
+		car.goStraight(10,1400);
+		car.goCurved(-6,-3, 6000);
+		car.goCurved(-3,-6, 6000);
+		car.goStraight(0);
+	}
+	
+	
+	private void forwardTillEndOfPlace(){
+		car.goStraight(10);
+		if(polycarSM.getParkingPlaceLeft()) {
+			while(car.readVeryLeftSensor().isWhite()) {				
+			}
+			polycarSM.setParkingPlaceLeft(false);
+		}
+		else {
+			while(car.readVeryRightSensor().isWhite()) {
+
+			}
+			polycarSM.setParkingPlaceRight(false);
+			
+		}
+		System.out.print("NOT FULL");
+		polycarSM.setParkingPlaceFull(false);
+			
+	}
 	private void resetAccesses() {
 	
 		polycarSM.setCanGoStraight(true);
@@ -242,15 +315,9 @@ public class PolycarSM {
 	
 	}
 	
-	private void askToPark() {
-		
-		parkThread = new Thread();
-		Runnable waitForPark = () -> waitForPark();
-	}
 	
-	private void waitForPark() {
-		
-	}
+	
+
 	
 	
 	
